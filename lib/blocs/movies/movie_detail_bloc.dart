@@ -18,7 +18,9 @@ class MovieDetailBloc implements BlocBase {
     }
 
     Env.apiClient.getMovie(movieID).then((movie) {
-      _movie.add(movie);
+      if (!_movie.isClosed) {
+        _movie.add(movie);
+      }
     });
   }
 

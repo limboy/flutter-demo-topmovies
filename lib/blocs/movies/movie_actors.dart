@@ -4,6 +4,9 @@ import 'package:topmovies/blocs/bloc_provider.dart';
 import 'package:topmovies/models/movie.dart';
 import 'package:topmovies/models/actor.dart';
 
+const _defaultAvatar =
+    'https://img3.doubanio.com/f/movie/8dd0c794499fe925ae2ae89ee30cd225750457b4/pics/movie/celebrity-default-medium.png';
+
 class _MovieActor extends StatelessWidget {
   final Actor actor;
   _MovieActor({Key key, this.actor}) : super(key: key);
@@ -20,7 +23,7 @@ class _MovieActor extends StatelessWidget {
               height: height - 30,
               width: double.infinity,
               child: Image.network(
-                actor.avatar,
+                actor.avatar == null ? _defaultAvatar : actor.avatar,
                 fit: BoxFit.cover,
               ),
             ),

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'movie_item_bloc.dart';
 import 'package:topmovies/blocs/bloc_provider.dart';
 import 'package:topmovies/models/movie.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class MovieFavPopupMixin {
   showPopup(BuildContext context, MovieItemBloc bloc, Movie movie) {
@@ -84,14 +85,11 @@ class MovieItemBig extends StatelessWidget with MovieFavPopupMixin {
                   children: <Widget>[
                     Stack(
                       children: <Widget>[
-                        Hero(
-                          tag: 'movie-${movie.id}',
-                          child: Image.network(
-                            movie.poster,
-                            width: 150,
-                            height: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
+                        Image.network(
+                          movie.poster,
+                          width: 150,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
                         ),
                         SizedBox(
                           width: 30,
@@ -192,14 +190,17 @@ class MovieItemSmall extends StatelessWidget with MovieFavPopupMixin {
           }
           return LayoutBuilder(builder: (context, constraints) {
             return Material(
+              color: Colors.grey,
               child: InkWell(
                 onTap: () => bloc.onTap(context),
                 child: Stack(children: <Widget>[
                   Positioned.fill(
                     child: Hero(
                       tag: 'movie-${movie.id}',
-                      child: Image.network(
-                        movie.poster,
+                      child: FadeInImage.memoryNetwork(
+                        image: movie.poster,
+                        fadeInDuration: Duration(milliseconds: 200),
+                        placeholder: kTransparentImage,
                         fit: BoxFit.cover,
                       ),
                     ),

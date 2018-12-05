@@ -19,12 +19,29 @@ class MovieHero extends StatelessWidget {
           flexibleSpace: FlexibleSpaceBar(
             centerTitle: true,
             title: Text(movie.title),
-            background: Hero(
-              tag: 'movie-${movie.id}',
-              child: Image.network(
-                movie.poster,
-                fit: BoxFit.cover,
-              ),
+            background: Stack(
+              alignment: Alignment.bottomCenter,
+              children: <Widget>[
+                Positioned.fill(
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Image.network(
+                    movie.poster,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [Colors.black87, Colors.transparent],
+                  )),
+                )
+              ],
             ),
           ),
         );
