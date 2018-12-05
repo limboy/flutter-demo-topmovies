@@ -4,13 +4,12 @@ import 'package:topmovies/env.dart';
 import 'package:topmovies/blocs/bloc_base.dart';
 
 class MoviesBloc extends BlocBase {
-  final BehaviorSubject<List<Movie>> _movies = BehaviorSubject(seedValue: []);
-  final BehaviorSubject<bool> _isLoadingMore = BehaviorSubject();
+  final BehaviorSubject<MovieEnvelope> _movieEnvelope = BehaviorSubject();
   var _currentStart = 0;
   var _displayedIndexes = List<int>();
+  bool _isLoadingMore = false;
 
-  Observable<List<Movie>> get movies => _movies.stream;
-  Observable<bool> get isLoadingMore => _isLoadingMore.stream;
+  Observable<MovieEnvelope> get movieEnvelope => _movieEnvelope.stream;
 
   MoviesBloc() {
     _getMovies();
@@ -18,28 +17,31 @@ class MoviesBloc extends BlocBase {
 
   _getMovies() {
     Env.apiClient.getMovieList(_currentStart).then((movieEnvelope) {
-      final _allMovies = List.of(_movies.value)..addAll(movieEnvelope.movies);
-      _movies.add(_allMovies);
-      _isLoadingMore.add(false);
-      _currentStart += 20;
+      var newMovieEnvelope = movieEnvelope;
+      if (_movieEnvelope.value != null) {
+        newMovieEnvelope.movies = _movieEnvelope.value.movies
+          ..addAll(movieEnvelope.movies);
+      }
+      _movieEnvelope.add(newMovieEnvelope);
+      _currentStart = movieEnvelope.movies.length;
+      _isLoadingMore = false;
     });
   }
 
   displayingItemOfIndex(int index) {
     if (!_displayedIndexes.contains(index)) {
       _displayedIndexes.add(index);
-    }
 
-    if (index == _currentStart - 1) {
-      if (!_isLoadingMore.value) {
-        _isLoadingMore.add(true);
-        _getMovies();
+      if (index == _currentStart - 1) {
+        if (!_isLoadingMore) {
+          _isLoadingMore = true;
+          _getMovies();
+        }
       }
     }
   }
 
   dispose() {
-    _movies.close();
-    _isLoadingMore.close();
+    _movieEnvelope.close();
   }
 }

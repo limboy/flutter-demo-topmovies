@@ -16,12 +16,16 @@ class _MoviesGridLayout extends SliverGridLayout {
     @required this.columnStride,
     @required this.tileHeight,
     @required this.tileWidth,
+    @required this.bottomHeight,
+    @required this.totalCount,
   });
 
   final double rowStride; // 一行有多高
   final double columnStride; // 一列有多宽
   final double tileHeight; // 一行有多高（不带 spacing）
   final double tileWidth; // 一列有多宽（不带 spacing）
+  final double bottomHeight; // 用于展示 loadmore
+  final int totalCount;
 
   int rowOfIndex(int index) {
     return index ~/ _childrenPerBlock * _rowsPerBlock +
@@ -48,7 +52,7 @@ class _MoviesGridLayout extends SliverGridLayout {
       crossAxisExtent:
           <int>[1, 0, 0, 0, 0][index % _childrenPerBlock] * columnStride +
               tileWidth,
-      mainAxisExtent: tileHeight,
+      mainAxisExtent: (index == totalCount - 1) ? bottomHeight : tileHeight,
       crossAxisOffset:
           <int>[0, 0, 1, 0, 1][index % _childrenPerBlock] * columnStride,
       scrollOffset: rowOfIndex(index) * rowStride,
@@ -57,12 +61,20 @@ class _MoviesGridLayout extends SliverGridLayout {
 
   @override
   double computeMaxScrollOffset(int childCount) {
-    return rowOfIndex(childCount) * rowStride;
+    final offset = rowOfIndex(childCount - 1) * rowStride;
+    return (childCount - 1) % _childrenPerBlock == 0
+        ? offset + bottomHeight
+        : offset;
   }
 }
 
 class _MoviesGridDelegate extends SliverGridDelegate {
   static const int _spacing = 10;
+  static const double _bottomHeight = 50;
+
+  final int totalCount;
+
+  _MoviesGridDelegate({@required this.totalCount});
 
   @override
   SliverGridLayout getLayout(SliverConstraints constraints) {
@@ -73,6 +85,8 @@ class _MoviesGridDelegate extends SliverGridDelegate {
       tileHeight: tileHeight,
       rowStride: tileHeight + _spacing,
       columnStride: tileWidth + _spacing,
+      bottomHeight: _bottomHeight,
+      totalCount: totalCount,
     );
   }
 
@@ -96,22 +110,33 @@ class _MoviesState extends State<Movies> {
   @override
   Widget build(BuildContext context) {
     final bloc = BlocProvider.of<MoviesBloc>(context);
-    return StreamBuilder<List<Movie>>(
-        stream: bloc.movies,
+    return StreamBuilder<MovieEnvelope>(
+        stream: bloc.movieEnvelope,
         builder: (context, snapshot) {
-          if (snapshot.data == null || snapshot.data.length == 0) {
+          if (snapshot.data == null || snapshot.data.movies.length == 0) {
             return Center(
               child: CupertinoActivityIndicator(),
             );
           }
 
-          final movies = snapshot.data;
+          final movieEnvelope = snapshot.data;
+          final movies = snapshot.data.movies;
 
           return GridView.builder(
-            gridDelegate: _MoviesGridDelegate(),
+            gridDelegate: _MoviesGridDelegate(totalCount: movies.length + 1),
             padding: EdgeInsets.all(10.0),
-            itemCount: movies.length,
+            itemCount: movies.length + 1,
             itemBuilder: (context, index) {
+              if (index == movies.length) {
+                if (movieEnvelope.start >= movieEnvelope.total) {
+                  return Center(
+                    child: Text('没有更多了···'),
+                  );
+                }
+                return Center(
+                  child: CupertinoActivityIndicator(),
+                );
+              }
               bloc.displayingItemOfIndex(index);
               final movieBloc = MovieItemBloc(movies[index]);
               itemBlocs.add(movieBloc);
