@@ -21,22 +21,6 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'Douban Movie Top 250',
           home: Home(),
-          // routes: {
-          //   '/': (context) {
-          //     return Home();
-          //   },
-          //   '/detail': (context) {
-          //     return Scaffold(
-          //       appBar: AppBar(
-          //         title: Text('Detail'),
-          //       ),
-          //       body: Center(
-          //         child: Text('Hello'),
-          //       ),
-          //     );
-          //   }
-          // },
-          // onGenerateRoute: Env.router.generator,
         ));
   }
 }

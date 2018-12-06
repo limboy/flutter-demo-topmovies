@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
-import 'movie_item_bloc.dart';
+import 'package:topmovies/blocs/movies/movie_item_bloc.dart';
 import 'package:topmovies/blocs/bloc_provider.dart';
 import 'package:topmovies/models/movie.dart';
 import 'package:transparent_image/transparent_image.dart';

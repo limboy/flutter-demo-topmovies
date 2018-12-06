@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:topmovies/blocs/movies/movies_widget.dart';
+import 'package:topmovies/widgets/movies/movies.dart';
 import 'package:topmovies/blocs/movies/movie_item_bloc.dart';
 
 class _BadgeWidget extends StatelessWidget {

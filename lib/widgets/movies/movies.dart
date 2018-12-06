@@ -4,8 +4,8 @@ import 'package:topmovies/models/movie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:topmovies/blocs/bloc_provider.dart';
 import 'package:topmovies/blocs/movies/movies_bloc.dart';
-import 'movie_item_widget.dart';
-import 'movie_item_bloc.dart';
+import 'package:topmovies/widgets/movies/movie_item.dart';
+import 'package:topmovies/blocs/movies/movie_item_bloc.dart';
 
 const int _childrenPerBlock = 5;
 const int _rowsPerBlock = 3;

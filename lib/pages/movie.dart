@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:topmovies/models/movie.dart';
 import 'package:topmovies/blocs/bloc_provider.dart';
 import 'package:topmovies/blocs/movies/movie_detail_bloc.dart';
-import 'package:topmovies/blocs/movies/movie_hero.dart';
-import 'package:topmovies/blocs/movies/movie_actors.dart';
-import 'package:topmovies/blocs/movies/movie_summary.dart';
-import 'package:topmovies/blocs/movies/movie_reviews.dart';
+import 'package:topmovies/widgets/movies/movie_hero.dart';
+import 'package:topmovies/widgets/movies/movie_actors.dart';
+import 'package:topmovies/widgets/movies/movie_summary.dart';
+import 'package:topmovies/widgets/movies/movie_reviews.dart';
 
 class MoviePage extends StatefulWidget {
   final String movieID;
@@ -81,57 +81,5 @@ class _MoviePageState extends State<MoviePage> {
             }
           }()),
         ));
-  }
-}
-
-class _MoviePage extends StatelessWidget {
-  final String movieID;
-  final Movie movie;
-  _MoviePage({Key key, this.movieID, this.movie}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final bloc = MovieDetailBloc(movieID: movieID, breifMovie: movie);
-    return Scaffold(
-      backgroundColor: Color(0xfff4f4f4),
-      body: BlocProvider(
-        bloc: bloc,
-        child: StreamBuilder<Movie>(
-          stream: bloc.movie,
-          initialData: bloc.breifMovie,
-          builder: (context, snapshot) {
-            if (snapshot.data == null) {
-              return Center(
-                child: Text('loading'),
-              );
-            } else {
-              return NotificationListener(
-                onNotification: (notification) {},
-                child: DefaultTabController(
-                    length: 2,
-                    child: SafeArea(
-                        top: false,
-                        child: CustomScrollView(
-                          slivers: <Widget>[
-                            MovieHero(),
-                            SliverToBoxAdapter(
-                              child: MovieSummary(),
-                            ),
-                            SliverToBoxAdapter(
-                              child: MovieActors(),
-                            ),
-                            SliverPadding(
-                              padding: EdgeInsets.all(7.0),
-                            ),
-                            MovieReviewTabbar(),
-                            MovieReviewTabbarContent(),
-                          ],
-                        ))),
-              );
-            }
-          },
-        ),
-      ),
-    );
   }
 }
